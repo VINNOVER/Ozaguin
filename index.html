@@ -1,0 +1,1579 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ozaguin - Artiste Musicien</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        /* Variables CSS */
+        :root {
+            --primary-color: #8a2be2;
+            --secondary-color: #ff6b6b;
+            --dark-color: #121212;
+            --light-color: #f4f4f4;
+            --gray-color: #333;
+            --gold-color: #ffd700;
+            --transition-slow: 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+            --transition-medium: 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+            --transition-fast: 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+        
+        /* Reset et base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--light-color);
+            background-color: var(--dark-color);
+            overflow-x: hidden;
+        }
+        
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        ul {
+            list-style: none;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        
+        .section {
+            padding: 100px 0;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        
+        .section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 60px;
+            position: relative;
+            color: var(--primary-color);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s ease 0.2s, transform 0.8s ease 0.2s;
+        }
+        
+        .section.visible .section-title {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            width: 100px;
+            height: 4px;
+            background: var(--secondary-color);
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%) scaleX(0);
+            transition: transform 0.8s ease 0.4s;
+            transform-origin: center;
+        }
+        
+        .section.visible .section-title::after {
+            transform: translateX(-50%) scaleX(1);
+        }
+        
+        /* Effet de particules flottantes */
+        .floating-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .particle {
+            position: absolute;
+            background: rgba(138, 43, 226, 0.1);
+            border-radius: 50%;
+            animation: float 15s infinite linear;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        /* Curseur personnalisé */
+        .cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: rgba(255, 107, 107, 0.5);
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s, background 0.3s;
+            mix-blend-mode: difference;
+        }
+        
+        .cursor.hover {
+            width: 50px;
+            height: 50px;
+            background: rgba(138, 43, 226, 0.7);
+        }
+        
+        /* Header avec effet de révélation */
+        header {
+            background-color: rgba(18, 18, 18, 0.9);
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+            padding: 15px 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transform: translateY(0);
+            transition: transform 0.5s ease, background-color 0.5s ease;
+        }
+        
+        header.hidden {
+            transform: translateY(-100%);
+        }
+        
+        header.scrolled {
+            background-color: rgba(18, 18, 18, 0.97);
+            padding: 10px 0;
+            backdrop-filter: blur(10px);
+        }
+        
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .logo::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            background: var(--secondary-color);
+            transition: left 0.5s ease;
+        }
+        
+        .logo:hover::after {
+            left: 0;
+        }
+        
+        .logo span {
+            color: var(--secondary-color);
+            display: inline-block;
+            transition: transform 0.3s ease;
+        }
+        
+        .logo:hover span {
+            animation: bounce 0.5s;
+        }
+        
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+        
+        .nav-links {
+            display: flex;
+        }
+        
+        .nav-links li {
+            margin-left: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .nav-links a {
+            font-weight: 600;
+            transition: color 0.3s;
+            position: relative;
+            padding: 5px 0;
+            display: inline-block;
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--secondary-color);
+            transform: translateX(-100%);
+            transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+        
+        .nav-links a:hover::after {
+            transform: translateX(0);
+        }
+        
+        .nav-links a:hover {
+            color: var(--secondary-color);
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .mobile-menu-btn:hover {
+            transform: rotate(90deg);
+        }
+        
+        /* Hero Section avec effet de parallaxe */
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(138, 43, 226, 0.1) 0%, rgba(255, 107, 107, 0.1) 100%);
+            z-index: 0;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 1.5s ease forwards 0.5s;
+        }
+        
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .hero-content h1 {
+            font-size: 4.5rem;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            text-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+        
+        .hero-content h1 span {
+            display: inline-block;
+            animation: waveText 2s infinite;
+            animation-delay: calc(0.1s * var(--i));
+        }
+        
+        @keyframes waveText {
+            0%, 40%, 100% {
+                transform: translateY(0);
+            }
+            20% {
+                transform: translateY(-20px);
+            }
+        }
+        
+        .hero-content p {
+            font-size: 1.5rem;
+            margin-bottom: 40px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 1s ease forwards 1s;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 15px 40px;
+            background-color: transparent;
+            color: white;
+            border-radius: 30px;
+            font-weight: 600;
+            transition: all 0.5s ease;
+            border: 2px solid var(--primary-color);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 1s ease forwards 1.2s;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.7s ease;
+            z-index: -1;
+        }
+        
+        .btn:hover::before {
+            left: 100%;
+        }
+        
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            transition: width 0.5s ease;
+            z-index: -2;
+        }
+        
+        .btn:hover::after {
+            width: 100%;
+        }
+        
+        .btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(138, 43, 226, 0.3);
+        }
+        
+        /* Musiques avec effet de révélation en cascade */
+        .music-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .music-card {
+            background-color: var(--gray-color);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: transform 0.5s ease, box-shadow 0.5s ease;
+            opacity: 0;
+            transform: translateY(30px) scale(0.9);
+        }
+        
+        .section.visible .music-card {
+            animation: cardReveal 0.8s ease forwards;
+        }
+        
+        .section.visible .music-card:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+        
+        .section.visible .music-card:nth-child(2) {
+            animation-delay: 0.3s;
+        }
+        
+        .section.visible .music-card:nth-child(3) {
+            animation-delay: 0.5s;
+        }
+        
+        @keyframes cardReveal {
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        .music-card:hover {
+            transform: translateY(-15px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+        
+        .music-img {
+            height: 220px;
+            width: 100%;
+            background-size: cover;
+            background-position: center;
+            transition: transform 0.8s ease;
+        }
+        
+        .music-card:hover .music-img {
+            transform: scale(1.1);
+        }
+        
+        .music-info {
+            padding: 25px;
+        }
+        
+        .music-title {
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .music-title::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--secondary-color);
+            transition: width 0.5s ease;
+        }
+        
+        .music-card:hover .music-title::after {
+            width: 100%;
+        }
+        
+        .music-date {
+            color: var(--secondary-color);
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+        
+        /* Disques d'or avec effet de brillance */
+        .gold-records {
+            background-color: #1a1a1a;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .gold-records::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.05) 0%, rgba(255, 215, 0, 0) 70%);
+            animation: rotate 20s linear infinite;
+        }
+        
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        .records-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 40px;
+        }
+        
+        .record-card {
+            background-color: rgba(26, 26, 26, 0.8);
+            padding: 40px 20px;
+            border-radius: 15px;
+            text-align: center;
+            width: 250px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 2px solid transparent;
+            background-clip: padding-box;
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: transform 0.5s ease;
+        }
+        
+        .section.visible .record-card {
+            animation: fadeInUp 0.8s ease forwards;
+        }
+        
+        .section.visible .record-card:nth-child(1) {
+            animation-delay: 0.2s;
+        }
+        
+        .section.visible .record-card:nth-child(2) {
+            animation-delay: 0.4s;
+        }
+        
+        .section.visible .record-card:nth-child(3) {
+            animation-delay: 0.6s;
+        }
+        
+        .record-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 15px;
+            padding: 2px;
+            background: linear-gradient(45deg, var(--gold-color), #ff9500, var(--gold-color));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        
+        .record-card:hover::before {
+            opacity: 1;
+        }
+        
+        .record-card:hover {
+            transform: translateY(-10px) scale(1.05);
+        }
+        
+        .record-icon {
+            font-size: 3.5rem;
+            color: var(--gold-color);
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
+            transition: transform 0.5s ease;
+        }
+        
+        .record-card:hover .record-icon {
+            transform: rotate(20deg) scale(1.2);
+        }
+        
+        .record-title {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+        
+        /* Dons avec effet de révélation */
+        .donations-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: var(--gray-color);
+            padding: 50px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .donations-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--primary-color), var(--secondary-color));
+        }
+        
+        .donation-item {
+            margin-bottom: 40px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid #555;
+            opacity: 0;
+            transform: translateX(-30px);
+        }
+        
+        .section.visible .donation-item {
+            animation: slideInRight 0.8s ease forwards;
+        }
+        
+        .section.visible .donation-item:nth-child(1) {
+            animation-delay: 0.2s;
+        }
+        
+        .section.visible .donation-item:nth-child(2) {
+            animation-delay: 0.4s;
+        }
+        
+        .section.visible .donation-item:nth-child(3) {
+            animation-delay: 0.6s;
+        }
+        
+        @keyframes slideInRight {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .donation-org {
+            font-size: 1.5rem;
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .donation-org::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-color);
+            transition: width 0.5s ease;
+        }
+        
+        .donation-item:hover .donation-org::after {
+            width: 100%;
+        }
+        
+        /* Galerie avec effet masonry et zoom */
+        .gallery-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .gallery-item {
+            height: 250px;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            opacity: 0;
+            transform: scale(0.8);
+        }
+        
+        .section.visible .gallery-item {
+            animation: zoomIn 0.8s ease forwards;
+        }
+        
+        @keyframes zoomIn {
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        .gallery-item:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+        
+        .gallery-item:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .gallery-item:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+        
+        .gallery-item:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+        
+        .gallery-item:nth-child(5) {
+            animation-delay: 0.5s;
+        }
+        
+        .gallery-item:nth-child(6) {
+            animation-delay: 0.6s;
+        }
+        
+        .gallery-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.8s ease;
+        }
+        
+        .gallery-item::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        
+        .gallery-item:hover::after {
+            opacity: 1;
+        }
+        
+        .gallery-item:hover .gallery-img {
+            transform: scale(1.2);
+        }
+        
+        .gallery-item::before {
+            content: 'Voir';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+            z-index: 2;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        
+        .gallery-item:hover::before {
+            opacity: 1;
+        }
+        
+        /* Commande avec effet de formulaire */
+        .booking-section {
+            background-color: #1a1a1a;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .booking-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 30% 20%, rgba(138, 43, 226, 0.1) 0%, transparent 50%),
+                      radial-gradient(circle at 70% 80%, rgba(255, 107, 107, 0.1) 0%, transparent 50%);
+        }
+        
+        .booking-form {
+            max-width: 700px;
+            margin: 0 auto;
+            background-color: rgba(51, 51, 51, 0.9);
+            padding: 50px;
+            border-radius: 15px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            position: relative;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        
+        .section.visible .booking-form {
+            animation: fadeInUp 1s ease forwards 0.3s;
+        }
+        
+        .form-group {
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 15px 20px;
+            background-color: rgba(34, 34, 34, 0.8);
+            border: 2px solid transparent;
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.2);
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+        }
+        
+        /* Footer avec effet de vague */
+        footer {
+            background-color: #0a0a0a;
+            padding: 80px 0 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 10px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        }
+        
+        .social-links {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 40px;
+            gap: 25px;
+        }
+        
+        .social-link {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: var(--gray-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: all 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .social-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            z-index: 1;
+        }
+        
+        .social-link i {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .social-link:hover::before {
+            opacity: 1;
+        }
+        
+        .social-link:hover {
+            transform: translateY(-10px) rotate(10deg);
+            box-shadow: 0 10px 20px rgba(138, 43, 226, 0.3);
+        }
+        
+        .copyright {
+            color: #777;
+            font-size: 0.9rem;
+            margin-top: 30px;
+        }
+        
+        /* Indicateur de progression de défilement */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            transform-origin: left;
+            transform: scaleX(0);
+            z-index: 1001;
+            transition: transform 0.1s ease;
+        }
+        
+        /* Effet de changement de section */
+        .section-indicator {
+            position: fixed;
+            right: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .section-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .section-dot.active {
+            background-color: var(--primary-color);
+            transform: scale(1.5);
+            box-shadow: 0 0 10px rgba(138, 43, 226, 0.8);
+        }
+        
+        .section-dot::after {
+            content: attr(data-section);
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+        
+        .section-dot:hover::after {
+            opacity: 1;
+        }
+        
+        /* Responsive */
+        @media (max-width: 1100px) {
+            .hero-content h1 {
+                font-size: 3.5rem;
+            }
+            
+            .section-indicator {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .nav-links {
+                position: fixed;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background-color: rgba(18, 18, 18, 0.98);
+                flex-direction: column;
+                align-items: center;
+                padding: 30px 0;
+                transform: translateY(-100%);
+                opacity: 0;
+                transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+                backdrop-filter: blur(10px);
+                z-index: 999;
+            }
+            
+            .nav-links.active {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            
+            .nav-links li {
+                margin: 20px 0;
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            
+            .nav-links.active li {
+                animation: navItemFade 0.5s ease forwards;
+            }
+            
+            .nav-links.active li:nth-child(1) {
+                animation-delay: 0.1s;
+            }
+            
+            .nav-links.active li:nth-child(2) {
+                animation-delay: 0.2s;
+            }
+            
+            .nav-links.active li:nth-child(3) {
+                animation-delay: 0.3s;
+            }
+            
+            .nav-links.active li:nth-child(4) {
+                animation-delay: 0.4s;
+            }
+            
+            .nav-links.active li:nth-child(5) {
+                animation-delay: 0.5s;
+            }
+            
+            .nav-links.active li:nth-child(6) {
+                animation-delay: 0.6s;
+            }
+            
+            @keyframes navItemFade {
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+            
+            .hero-content h1 {
+                font-size: 2.8rem;
+            }
+            
+            .hero-content p {
+                font-size: 1.2rem;
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .hero-content h1 {
+                font-size: 2.2rem;
+            }
+            
+            .section-title {
+                font-size: 1.8rem;
+            }
+            
+            .music-grid, .gallery-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .donations-container, .booking-form {
+                padding: 30px 20px;
+            }
+            
+            .social-links {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Curseur personnalisé -->
+    <div class="cursor"></div>
+    
+    <!-- Indicateur de progression -->
+    <div class="scroll-progress"></div>
+    
+    <!-- Particules flottantes -->
+    <div class="floating-particles" id="particles"></div>
+    
+    <!-- Indicateur de sections -->
+    <div class="section-indicator">
+        <div class="section-dot active" data-section="Accueil" data-target="accueil"></div>
+        <div class="section-dot" data-section="Musiques" data-target="musiques"></div>
+        <div class="section-dot" data-section="Disques d'Or" data-target="disques"></div>
+        <div class="section-dot" data-section="Dons" data-target="dons"></div>
+        <div class="section-dot" data-section="Galerie" data-target="galerie"></div>
+        <div class="section-dot" data-section="Commander" data-target="commande"></div>
+    </div>
+    
+    <!-- Header -->
+    <header id="header">
+        <div class="container header-container">
+            <a href="#accueil" class="logo">OZA<span>GUIN</span></a>
+            <div class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#accueil">Accueil</a></li>
+                <li><a href="#musiques">Musiques</a></li>
+                <li><a href="#disques">Disques d'or</a></li>
+                <li><a href="#dons">Dons</a></li>
+                <li><a href="#galerie">Galerie</a></li>
+                <li><a href="#commande">Commander</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="accueil">
+        <div class="container hero-content">
+            <h1 id="animated-title">Ozaguin</h1>
+            <p>Artiste musicien de renommée internationale, créateur d'émotions à travers ses mélodies envoûtantes et ses performances scéniques captivantes.</p>
+            <a href="#musiques" class="btn">Découvrir ma musique</a>
+        </div>
+    </section>
+
+    <!-- Dernières Musiques -->
+    <section class="section" id="musiques">
+        <div class="container">
+            <h2 class="section-title">Dernières Musiques</h2>
+            <div class="music-grid">
+                <div class="music-card">
+                    <div class="music-img" style="background-image: url('https://images.unsplash.com/photo-1470225620780-dba8ba36b745?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');"></div>
+                    <div class="music-info">
+                        <h3 class="music-title">Rêves Éternels</h3>
+                        <p class="music-date">Sortie : Juin 2023</p>
+                        <p>Une ballade mélancolique qui explore les profondeurs de l'âme humaine et l'espoir qui persiste malgré l'adversité.</p>
+                    </div>
+                </div>
+                <div class="music-card">
+                    <div class="music-img" style="background-image: url('https://images.unsplash.com/photo-1511379938547-c1f69419868d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');"></div>
+                    <div class="music-info">
+                        <h3 class="music-title">Rythme Urbain</h3>
+                        <p class="music-date">Sortie : Avril 2023</p>
+                        <p>Un titre énergique qui capture l'essence de la vie urbaine avec des beats entraînants et des paroles percutantes.</p>
+                    </div>
+                </div>
+                <div class="music-card">
+                    <div class="music-img" style="background-image: url('https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');"></div>
+                    <div class="music-info">
+                        <h3 class="music-title">Silence Brisé</h3>
+                        <p class="music-date">Sortie : Février 2023</p>
+                        <p>Une collaboration avec l'artiste internationale Lana, mêlant pop et électro pour un résultat époustouflant.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Disques d'Or -->
+    <section class="section gold-records" id="disques">
+        <div class="container">
+            <h2 class="section-title">Disques d'Or</h2>
+            <div class="records-container">
+                <div class="record-card">
+                    <div class="record-icon">
+                        <i class="fas fa-record-vinyl"></i>
+                    </div>
+                    <h3 class="record-title">"Échos"</h3>
+                    <p>500 000 exemplaires vendus</p>
+                    <p>Certifié Or en 2022</p>
+                </div>
+                <div class="record-card">
+                    <div class="record-icon">
+                        <i class="fas fa-record-vinyl"></i>
+                    </div>
+                    <h3 class="record-title">"Métamorphose"</h3>
+                    <p>750 000 exemplaires vendus</p>
+                    <p>Certifié Or en 2021</p>
+                </div>
+                <div class="record-card">
+                    <div class="record-icon">
+                        <i class="fas fa-record-vinyl"></i>
+                    </div>
+                    <h3 class="record-title">"Renaissance"</h3>
+                    <p>1 000 000 exemplaires vendus</p>
+                    <p>Certifié Or en 2020</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dons -->
+    <section class="section" id="dons">
+        <div class="container">
+            <h2 class="section-title">Engagements & Dons</h2>
+            <div class="donations-container">
+                <div class="donation-item">
+                    <h3 class="donation-org">Fondation pour la Musique Jeunesse</h3>
+                    <p>Ozaguin a fait un don de 50 000€ pour soutenir l'éducation musicale des enfants défavorisés à travers la France. Ce don a permis l'achat de 200 instruments de musique pour des écoles partenaires.</p>
+                </div>
+                <div class="donation-item">
+                    <h3 class="donation-org">Association "Artistes Sans Frontières"</h3>
+                    <p>En 2022, Ozaguin a reversé 30% des bénéfices de sa tournée "Échos" pour financer des ateliers musicaux dans des camps de réfugiés en Europe et en Afrique.</p>
+                </div>
+                <div class="donation-item">
+                    <h3 class="donation-org">Fonds d'Urgence pour les Artistes</h3>
+                    <p>Pendant la pandémie, Ozaguin a créé un fonds de 100 000€ pour soutenir les musiciens indépendants en difficulté financière, permettant à 50 artistes de continuer leur création.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Galerie Concerts -->
+    <section class="section" id="galerie">
+        <div class="container">
+            <h2 class="section-title">Galerie Concerts</h2>
+            <div class="gallery-container">
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1501386761578-eac5c94b800a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Concert à Paris" class="gallery-img">
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Concert à New York" class="gallery-img">
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Festival de musique" class="gallery-img">
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1571115677070-5d5d028a0e0a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Performance acoustique" class="gallery-img">
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1516280440614-37939bbacd81?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Enregistrement en studio" class="gallery-img">
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1518609878373-06d740f60d8b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Concert intimiste" class="gallery-img">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Commander une Prestation -->
+    <section class="section booking-section" id="commande">
+        <div class="container">
+            <h2 class="section-title">Commander une Prestation</h2>
+            <div class="booking-form">
+                <form id="bookingForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="name">Nom complet *</label>
+                            <input type="text" id="name" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email *</label>
+                            <input type="email" id="email" class="form-control" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="phone">Téléphone *</label>
+                            <input type="tel" id="phone" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="event-type">Type d'événement *</label>
+                            <select id="event-type" class="form-control" required>
+                                <option value="">Sélectionnez...</option>
+                                <option value="concert">Concert</option>
+                                <option value="festival">Festival</option>
+                                <option value="prive">Événement privé</option>
+                                <option value="corporate">Événement corporate</option>
+                                <option value="mariage">Mariage</option>
+                                <option value="autre">Autre</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="date">Date souhaitée *</label>
+                            <input type="date" id="date" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="duration">Durée (heures) *</label>
+                            <select id="duration" class="form-control" required>
+                                <option value="1">1 heure</option>
+                                <option value="2">2 heures</option>
+                                <option value="3">3 heures</option>
+                                <option value="4">4 heures</option>
+                                <option value="5">Plus de 4 heures</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="location">Lieu de l'événement *</label>
+                        <input type="text" id="location" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="message">Message supplémentaire</label>
+                        <textarea id="message" class="form-control" rows="5" placeholder="Décrivez votre événement, vos attentes, le nombre d'invités, etc."></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn" style="width: 100%;">Envoyer la demande</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="social-links">
+                <a href="#" class="social-link"><i class="fab fa-spotify"></i></a>
+                <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
+                <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="social-link"><i class="fab fa-tiktok"></i></a>
+            </div>
+            <p class="copyright">© 2023 Ozaguin. Tous droits réservés. | Site créé avec passion pour la musique.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Création des particules flottantes
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 30;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // Taille aléatoire
+                const size = Math.random() * 20 + 5;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                
+                // Position aléatoire
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.top = `${Math.random() * 100}%`;
+                
+                // Animation delay aléatoire
+                particle.style.animationDelay = `${Math.random() * 20}s`;
+                
+                // Couleur aléatoire
+                const colors = [
+                    'rgba(138, 43, 226, 0.2)',
+                    'rgba(255, 107, 107, 0.2)',
+                    'rgba(255, 215, 0, 0.2)'
+                ];
+                particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+        
+        // Curseur personnalisé
+        const cursor = document.querySelector('.cursor');
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+        
+        // Ajout de la classe hover sur les éléments interactifs
+        const hoverElements = document.querySelectorAll('a, button, .music-card, .record-card, .gallery-item, .social-link');
+        hoverElements.forEach(element => {
+            element.addEventListener('mouseenter', () => {
+                cursor.classList.add('hover');
+            });
+            
+            element.addEventListener('mouseleave', () => {
+                cursor.classList.remove('hover');
+            });
+        });
+        
+        // Animation du titre
+        function animateTitle() {
+            const title = document.getElementById('animated-title');
+            const text = title.textContent;
+            title.textContent = '';
+            
+            for (let i = 0; i < text.length; i++) {
+                const span = document.createElement('span');
+                span.textContent = text[i];
+                span.style.setProperty('--i', i);
+                title.appendChild(span);
+            }
+        }
+        
+        // Gestion du header au défilement
+        let lastScroll = 0;
+        const header = document.getElementById('header');
+        
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.pageYOffset;
+            
+            // Masquer/afficher le header
+            if (currentScroll > lastScroll && currentScroll > 100) {
+                header.classList.add('hidden');
+            } else {
+                header.classList.remove('hidden');
+            }
+            
+            // Ajouter la classe scrolled
+            if (currentScroll > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+            
+            lastScroll = currentScroll;
+            
+            // Indicateur de progression
+            const scrollProgress = document.querySelector('.scroll-progress');
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            scrollProgress.style.transform = `scaleX(${scrolled / 100})`;
+            
+            // Mise à jour de l'indicateur de section
+            updateSectionIndicator();
+        });
+        
+        // Menu mobile
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const navLinks = document.querySelector('.nav-links');
+        
+        mobileMenuBtn.addEventListener('click', function() {
+            navLinks.classList.toggle('active');
+            this.querySelector('i').classList.toggle('fa-bars');
+            this.querySelector('i').classList.toggle('fa-times');
+        });
+        
+        // Fermer le menu mobile après clic sur un lien
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', function() {
+                navLinks.classList.remove('active');
+                mobileMenuBtn.querySelector('i').classList.remove('fa-times');
+                mobileMenuBtn.querySelector('i').classList.add('fa-bars');
+            });
+        });
+        
+        // Gestion du formulaire
+        document.getElementById('bookingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Animation de soumission
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Envoi en cours...';
+            submitBtn.disabled = true;
+            
+            // Simulation d'envoi avec délai
+            setTimeout(() => {
+                // Récupération des données du formulaire
+                const name = document.getElementById('name').value;
+                const email = document.getElementById('email').value;
+                const eventType = document.getElementById('event-type').value;
+                
+                // Message de confirmation
+                alert(`Merci ${name} pour votre demande de prestation!\nNous vous contacterons très prochainement à ${email} pour discuter de votre événement ${eventType}.`);
+                
+                // Réinitialisation du formulaire
+                document.getElementById('bookingForm').reset();
+                
+                // Restauration du bouton
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+                
+                // Animation de confirmation
+                submitBtn.style.background = 'linear-gradient(45deg, #4CAF50, #8BC34A)';
+                setTimeout(() => {
+                    submitBtn.style.background = '';
+                }, 2000);
+            }, 1500);
+        });
+        
+        // Date minimum pour la date de l'événement (aujourd'hui)
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('date').setAttribute('min', today);
+        
+        // Animation des sections au défilement
+        function checkVisibility() {
+            const sections = document.querySelectorAll('.section');
+            
+            sections.forEach(section => {
+                const sectionTop = section.getBoundingClientRect().top;
+                const windowHeight = window.innerHeight;
+                
+                if (sectionTop < windowHeight * 0.85) {
+                    section.classList.add('visible');
+                }
+            });
+        }
+        
+        // Mise à jour de l'indicateur de section
+        function updateSectionIndicator() {
+            const sections = document.querySelectorAll('section[id]');
+            const sectionDots = document.querySelectorAll('.section-dot');
+            
+            let currentSection = '';
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 100;
+                const sectionHeight = section.clientHeight;
+                const scrollPosition = window.pageYOffset;
+                
+                if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+                    currentSection = section.getAttribute('id');
+                }
+            });
+            
+            sectionDots.forEach(dot => {
+                dot.classList.remove('active');
+                if (dot.getAttribute('data-target') === currentSection) {
+                    dot.classList.add('active');
+                }
+            });
+        }
+        
+        // Navigation par clic sur les indicateurs de section
+        document.querySelectorAll('.section-dot').forEach(dot => {
+            dot.addEventListener('click', function() {
+                const targetId = this.getAttribute('data-target');
+                const targetElement = document.getElementById(targetId);
+                
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            createParticles();
+            animateTitle();
+            checkVisibility();
+            updateSectionIndicator();
+            
+            // Vérification de la visibilité des sections au défilement
+            window.addEventListener('scroll', checkVisibility);
+            
+            // Animation d'entrée des éléments au chargement
+            setTimeout(() => {
+                document.querySelector('.hero-content').style.animation = 'fadeInUp 1.5s ease forwards 0.5s';
+            }, 500);
+        });
+    </script>
+</body>
+</html>
